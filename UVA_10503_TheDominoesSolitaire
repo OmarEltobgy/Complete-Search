@@ -1,0 +1,78 @@
+import java.util.*;
+public class UVA_10503_TheDominoesSolitaire 
+{
+  static int[][] taken = new int[14][2];
+	static int[][] available = new int[14][2];
+	static int[] first = new int[2];
+	static int[] last = new int[2];
+	static int[] dominoes;
+	static int[] doubles;
+	static int n, m;
+	static int flag;
+	
+	public static boolean check()
+	{
+		dominoes = new int[8];
+		dominoes[first[1]] ++;
+		dominoes[last[0]] ++;
+		for(int i=0; i<n; i++)
+		{
+			dominoes[taken[i][0]]++;
+			dominoes[taken[i][1]]++;
+		}
+		for(int i=0; i<8; i++)
+		{
+			if(dominoes[i] % 2 != 0)
+				return false;
+		}
+		return true;
+	}
+	public static void solve(int now, int NTaken)
+	{
+		if(flag == 1)
+			return;
+		if(NTaken == n)
+		{
+			if(check() == true)
+			{
+				flag = 1;
+				return;
+			}
+			else
+				return;
+		}
+		if(now == m)
+			return;
+		taken[NTaken][0] = available[now][0];
+		taken[NTaken][1] = available[now][1];
+		solve(now+1, NTaken+1);
+		solve(now+1, NTaken);
+	}
+	public static void main(String[] args) 
+	{
+		Scanner in = new Scanner(System.in);
+		int i;
+		n = in.nextInt();
+		while(n != 0)
+		{
+			m = in.nextInt();
+			first[0] = in.nextInt();
+			first[1] = in.nextInt();
+			last[0] = in.nextInt();
+			last[1] = in.nextInt();
+			for(i=0; i<m; i++)
+			{
+				available[i][0] = in.nextInt();
+				available[i][1] = in.nextInt();
+			}
+			flag = 0;
+			solve(0, 0);
+			if(flag == 0)
+				System.out.println("NO");
+			else
+				System.out.println("YES");
+			n = in.nextInt();
+		}
+		in.close();
+	}
+}
