@@ -1,0 +1,87 @@
+import java.util.*;
+import java.io.*;
+public class UVA_574_SumItUp 
+{
+  static int[] numbers;
+	static int[] Taken = new int[12];
+	static int[] NN;
+	static int N, Total, flag;
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+	public static void solve(int i, int sum, int n)
+	{
+		if(sum > Total)
+			return;
+		if(i == N)
+		{
+			if(sum == Total)
+			{
+				int c=0;
+				for(int j=0; j<N; j++)
+				{
+					for(int k=0; k<Taken[j]; k++)
+					{
+						if(c < n-1)
+						{
+							out.print(numbers[j]+"+");
+							c++;
+						}
+						else
+							out.println(numbers[j]);
+					}
+				}
+				flag = 1;
+				return;
+			}
+			else
+				return;
+		}
+		
+		for(int j=NN[numbers[i]]; j>=0; j--)
+		{
+			Taken[i] = j;
+			solve(i+1, sum + j*numbers[i], n+j);
+		}
+	}
+	public static void main(String[] args) 
+	{
+		Scanner in = new Scanner(System.in);
+		int i, temp;
+		Total = in.nextInt();
+		N = in.nextInt();
+		while(N != 0)
+		{
+			NN = new int[1000];
+			numbers = new int[12];
+			for(i=0; i<N; i++)
+			{
+				temp = in.nextInt();
+				NN[temp] ++;
+				if(i==0 || (i!=0 && temp!=numbers[i-1]))
+				{
+					if(temp <= Total)
+						numbers[i] = temp;
+					else
+					{
+						i--;
+						N--;
+					}
+				}
+				else
+				{
+					N--;
+					i--;
+				}
+			}
+			out.println("Sums of " + Total + ":");
+			flag = 0;
+			if(Total != 0 || (Total==0&&NN[0]!=0))
+				solve(0, 0, 0);
+			if(flag == 0)
+				out.println("NONE");
+			Total = in.nextInt();
+			N = in.nextInt();
+		}
+		in.close();
+		out.close();
+	}
+}
