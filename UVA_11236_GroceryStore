@@ -1,0 +1,26 @@
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
+public class UVA_11236_GroceryStore
+{
+  public static void main(String[] args)
+	{
+		PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+		long i, j, k, sum=0, product=1;
+		double l;
+		for(i=1; 4*i<=2000/**/; i+=1)
+			for(j=i; i+3*j<=2000/**/; j+=1)
+				for(k=j; i+j+2*k<=2000/**/; k+=1)
+				{
+					sum = i + j + k;
+					product = i * j * k;
+					if(product == 1000000)
+						continue;
+					l = (double)(1000000*sum)/(product-1000000);
+					if(l+sum > 2000 || l<k || l!=(int)l)
+						continue;
+					out.printf("%.2f %.2f %.2f %.2f\n", (double)i/100, (double)j/100, (double)k/100, (double)l/100);
+				}
+		out.close();
+	}
+}
