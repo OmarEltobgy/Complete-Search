@@ -1,0 +1,64 @@
+import java.io.*;
+import java.util.*;
+public class UVA_156_Ananagrams 
+{
+  public static void main(String[] args) throws IOException 
+	{
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+		String line;
+		char[][] inputSorted = new char[10000][20];
+		String[] input = new String[10000];
+		String[] inputSorted2 = new String[10000];
+		int[] isNotAnagram = new int[10000];
+		char temp;
+		int i, j=0, k, spaceBefore = 0;
+		line = in.readLine();
+		input[0] = "";
+		while(line.charAt(0) != '#')
+		{
+			spaceBefore = 1;
+			for(i=0; i<line.length(); i++)
+			{
+				if(line.charAt(i) != ' ')
+				{
+					temp = line.charAt(i);
+					input[j] += temp;
+					spaceBefore = 0;
+				}
+				if(line.charAt(i) == ' ' && spaceBefore == 0)
+				{
+					j++;
+					input[j] = "";
+					spaceBefore = 1;
+				}
+			}
+			j++;
+			input[j] = "";
+			line = in.readLine();
+		}
+		Arrays.sort(input, 0, j);
+		for(i=0; i<j; i++)
+		{
+			inputSorted[i] = input[i].toLowerCase().toCharArray();
+			Arrays.sort(inputSorted[i]);
+			inputSorted2[i] = "";
+			for(k=0; k<input[i].length(); k++)
+				inputSorted2[i] += inputSorted[i][k];
+		}
+		for(i=0; i<j; i++)
+		{
+			for(k=i+1; k<j; k++)
+				if(inputSorted2[i].equals(inputSorted2[k]) == true)
+				{
+					isNotAnagram[i] = 1;
+					isNotAnagram[k] = 1;
+					break;
+				}
+			if(isNotAnagram[i] == 0)
+				out.println(input[i]);
+		}
+		in.close();
+		out.close();
+	}
+}
