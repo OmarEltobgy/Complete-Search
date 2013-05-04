@@ -1,0 +1,71 @@
+import java.util.*;
+public class UVA_624_CD 
+{
+  static int maxSum;
+	static int tracksN;
+	static int[] tracks = new int[20];
+	static int[] nowrecorded = new int[20];
+	static int nowSum;
+	static int Sum;
+	static int[] recorded = new int[20];
+	public static void calc(int i) 
+	{
+		if(nowSum > maxSum)
+			return;
+		if(i == tracksN)
+		{
+			if(maxSum-nowSum < maxSum-Sum)
+			{
+				Sum = nowSum;
+				for(int j=0; j<tracksN; j++)
+					recorded[j] = nowrecorded[j];
+			}
+		}
+		else
+		{
+			nowrecorded[i] = 1;
+			nowSum+=tracks[i];
+			calc(i+1);
+			nowSum-=tracks[i];
+			nowrecorded[i] = 0;
+			calc(i+1);
+		}
+	}
+	
+//	public static void check() 
+//	{
+//		nowSum = 0;
+//		for(int i=0; i<tracksN; i++)
+//			if(nowrecorded[i] == 1)
+//				nowSum+=tracks[i];
+//		if(nowSum <= maxSum && maxSum-nowSum < maxSum-Sum)
+//		{
+//			Sum=nowSum;
+//			for(int i=0; i<tracksN; i++)
+//				recorded[i] = nowrecorded[i];
+//		}
+//	}
+
+	public static void main(String[] args)
+	{
+		Scanner in = new Scanner(System.in);
+		int i;
+		int bestSum;
+		while(true)
+		{
+			maxSum = in.nextInt();
+			tracksN = in.nextInt();
+			for(i=0; i<tracksN; i++)
+				tracks[i] = in.nextInt();
+			nowSum = 0;
+			Sum = 0;
+			calc(0);
+			for(i=0; i<tracksN; i++)
+				if(recorded[i] == 1)
+					System.out.print(tracks[i] +" ");
+			System.out.println("sum:" + Sum);
+			if(in.hasNextInt() == false)
+				break;
+		}
+	}
+}
