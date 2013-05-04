@@ -1,0 +1,186 @@
+import java.io.*;
+import java.util.*;
+public class UVA_10010_WhereWaldorf 
+{
+  static char[][] grid = new char[60][60];
+	static char[] key = new char[60];
+	static int found;
+	static int m, n;
+	public static void find(int startRow, int startColumn)
+	{
+		int i, j, c;
+		//column down
+		if( (m-startRow+1)  >= key.length )
+		{
+			i = startRow;
+			c = 0;
+			while(i<m && c<key.length && grid[i][startColumn] == key[c])
+			{
+				i++;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+		//column up
+		if( (startRow+1)  >= key.length )
+		{
+			i = startRow;
+			c = 0;
+			while(i>=0 && c<key.length && grid[i][startColumn] == key[c])
+			{
+				i--;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+		//Row forward
+		if( (n-startColumn+1)  >= key.length )
+		{
+			j = startColumn;
+			c = 0;
+			while(j<n && c<key.length && grid[startRow][j] == key[c])
+			{
+				j++;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+		//Row back
+		if( (startColumn+1)  >= key.length )
+		{
+			j = startColumn;
+			c = 0;
+			while(j>=0 && c<key.length && grid[startRow][j] == key[c])
+			{
+				j--;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+		//Major diagonal Down
+		if( (m-startRow+1)  >= key.length && (n-startColumn+1)  >= key.length )
+		{
+			i = startRow;
+			j = startColumn;
+			c = 0;
+			while(i<m && j<n && c<key.length && grid[i][j] == key[c])
+			{
+				i++;
+				j++;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+		//Major diagonal Up
+		if( (startRow+1)  >= key.length && (startColumn+1)  >= key.length)
+		{
+			i = startRow;
+			j = startColumn;
+			c = 0;
+			while(i>=0 && j>=0 && c<key.length && grid[i][j] == key[c])
+			{
+				i--;
+				j--;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+		//Minor diagonal Down
+		if( (m-startRow+1)  >= key.length && (startColumn+1)  >= key.length )
+		{
+			i = startRow;
+			j = startColumn;
+			c = 0;
+			while(i<m && j>=0 && c<key.length && grid[i][j] == key[c])
+			{
+				i++;
+				j--;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+		//Minor diagonal Up
+		if( (startRow+1)  >= key.length && (n-startColumn+1)  >= key.length )
+		{
+			i = startRow;
+			j = startColumn;
+			c = 0;
+			while(i>=0 && j<n && c<key.length && grid[i][j] == key[c])
+			{
+				i--;
+				j++;
+				c++;
+			}
+			if(c == key.length)
+			{
+				found = 1;
+				return;
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws IOException 
+	{
+		int TN, T, i, j = 0, k, c;
+		String S;
+		String[] SS = new String[2];
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+		S = in.readLine();
+		TN = Integer.parseInt(S);
+		for(T=0; T<TN; T++)
+		{
+			S = in.readLine();
+			S = in.readLine();
+			SS = S.split(" ");
+			m = Integer.parseInt(SS[0]);
+			n = Integer.parseInt(SS[1]);
+			for(i=0; i<m; i++)
+				grid[i] = in.readLine().toLowerCase().toCharArray();
+			S = in.readLine();
+			k = Integer.parseInt(S);
+			for(c=0; c<k; c++)
+			{
+				key = in.readLine().toLowerCase().toCharArray();
+				found = 0;
+				for(i=0; i<m && found == 0; i++)
+					for(j=0; j<n && found == 0; j++)
+						if(grid[i][j] == key[0])
+							find(i, j);
+				out.println(i + " " + j);
+			}
+			if(T!=TN-1)
+				out.println();
+		}
+		in.close();
+		out.close();
+	}
+}
