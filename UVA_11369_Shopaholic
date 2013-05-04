@@ -1,0 +1,26 @@
+#include <iostream>
+#include <stdio.h>
+#include<algorithm>
+using namespace std;
+bool comp(int a,int b )
+{
+    return a>b;
+}
+int main()
+{
+    int t;
+    cin >> t;
+    int tt, n, nn, i, j, sum, maxIndex, temp;
+    int X[20001];
+    for(tt=0; tt<t; tt++)
+    {
+        cin >> n;
+        for(nn=1; nn<=n; nn++)
+            cin >> X[nn];
+        sort(X+1,X+n+1,comp);
+        sum = 0;
+        for(i=n-n%3; i>0; i-=3)
+            sum += X[i];
+        cout << sum << endl;
+    }
+}
