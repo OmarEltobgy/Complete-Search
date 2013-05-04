@@ -1,0 +1,63 @@
+import java.util.*;
+public class UVA_11389_TheBusDriverProblem 
+{
+  public static void main(String[] args) 
+	{
+		Scanner in = new Scanner (System.in);
+		int n, r, d, i, j, sum, result, maxM=10000, maxE=10000, minM=0, minE=0, X, temp;
+		n = in.nextInt();
+		d = in.nextInt();
+		r = in.nextInt();
+		while(n!=0 && r!=0 && d!=0)
+		{
+			int[] Morning = new int[10001];
+			int[] Evening = new int[10001];
+			maxM=10000;
+			maxE=10000;
+			minM=0;
+			minE=0;
+			sum = 0;
+			for(i=0; i<n; i++)
+			{
+				X = in.nextInt();
+				Morning[X]++;
+				if(X > maxM)
+					maxM = X;
+				if(X < minM)
+					minM = X;
+			}
+			for(i=0; i<n; i++)
+			{
+				X = in.nextInt();
+				Evening[X]++;
+				if(X > maxE)
+					maxE = X;
+				if(X < minE)
+					minE = X;
+			}
+			i = minM;
+			j = maxE;
+			while(i <= maxM && j>= minE)
+			{
+				if(Morning[i] == 0)
+					i++;
+				else if(Evening[j] == 0)
+					j--;
+				else
+				{
+					temp = i+j;
+					if(temp > d)
+					{
+						sum += r*(temp-d);
+					}
+					Morning[i]--;
+					Evening[j]--;
+				}
+			}
+			System.out.println(sum);
+			n = in.nextInt();
+			d = in.nextInt();
+			r = in.nextInt();
+		}
+	}
+}
