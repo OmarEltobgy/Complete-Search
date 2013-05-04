@@ -1,0 +1,65 @@
+import java.util.*;
+public class UVA_11005_CheapestBase 
+{
+  public static void main(String[] args)
+	{
+		Scanner in = new Scanner(System.in);
+		int T = in.nextInt();
+		int TT, tt, t, i, X, Y, flag, min, total, counter;
+		int[] cost = new int[36];
+		int[] result = new int[36];
+		for(t=0; t<T; t++)
+		{
+			for(i=0; i<36; i++)
+				cost[i] = in.nextInt();
+			TT = in.nextInt();
+			System.out.printf("Case %d:\n", (t+1));
+			for(tt=0; tt<TT; tt++)
+			{
+				X = in.nextInt();
+				Y = X;
+				flag = 0;
+				total = 0;
+				min = 0;
+				counter = 0;
+				for(i=2; i<=36; i++)
+				{
+					Y = X;
+					total = 0;
+					while(Y!=0)
+					{
+						total += cost[Y%i];
+						Y = Y/i;
+					}
+					if(flag == 0)
+					{
+						min = total;
+						flag = 1;
+						counter = 0;
+						result[counter] = i;
+						counter ++;
+					}
+					else if(total < min)
+					{
+						min = total;
+						counter = 0;
+						result[counter] = i;
+						counter ++;
+					}
+					else if(total == min)
+					{
+						result[counter] = i;
+						counter ++;
+					}
+				}
+				System.out.printf("Cheapest base(s) for number %d:", X);
+				for(i=0; i<counter; i++)
+					System.out.printf(" %d", result[i]);
+				System.out.println();
+			}
+			if(t != T-1)
+				System.out.println();
+		}
+		in.close();
+	}
+}
