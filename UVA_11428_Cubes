@@ -1,0 +1,44 @@
+import java.util.*;
+public class UVA_11428_Cubes 
+{
+  public static void main(String[] args) 
+	{
+		Scanner in = new Scanner(System.in);
+		int N;
+		int x=1,y=0;
+		int flag = 0;
+		float result = 0;
+		N = in.nextInt();
+		flag = 0;
+		while(N!=0)
+		{
+			y=0;
+			x=y+1;
+			result = x*x*x - y*y*y;
+			while(result <= N && flag == 0)
+			{
+				if(result == N)
+					flag = 1;
+				while(result <= N && flag == 0)
+				{
+					x++;
+					result = x*x*x - y*y*y;
+					if(result == N)
+						flag = 1;
+				}
+				if(flag == 0)
+				{
+					y++;
+					x=y+1;
+					result = x*x*x - y*y*y;
+				}
+			}
+			if(flag == 1)
+				System.out.println(x + " " + y);
+			else 
+				System.out.println("No solution");
+			N = in.nextInt();
+			flag = 0;
+		}
+	}
+}
