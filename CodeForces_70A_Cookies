@@ -1,0 +1,20 @@
+import java.util.*;
+public class CodeForces_70A_Cookies 
+{
+  public static void main(String[] args) 
+	{
+		int i;
+		int result = 1;
+		int n;
+		int[] X = new int[1001];
+		X[0] = 1;
+		for(i=1; i<=1000; i++)
+		{
+			X[i] = result;
+			result = (int) ((result * 3)%(Math.pow(10, 6) + 3));
+		}
+		Scanner in = new Scanner(System.in);
+		n = in.nextInt();
+		System.out.println(X[n]);
+	}
+}
