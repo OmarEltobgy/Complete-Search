@@ -1,0 +1,63 @@
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.*;
+public class UVA_524_PrimeRingProblem 
+{
+  static int[] X = new int[17];
+	static int[] taken;
+	static int[] result = new int[17];
+	static int N;
+	static boolean[] isPrime = { false, false, true, true, false, true, false,
+		 true, false, false, false, true, false, true, false, false, false,
+		 true, false, true, false, false, false, true, false, false, false,
+		 false, false, true, false, true, false, false, false, false, false };
+	static StringBuilder S;
+	public static void solve(int now, int NTaken)
+	{
+		if(NTaken == N)
+		{
+			if(isPrime[result[0]+result[N-1]] == true)
+			{
+				for(int i=0; i<N-1; i++)
+					S.append(result[i] + " ");
+				S.append(result[N-1] + "\n");
+			}
+			return;
+		}
+		for(int i=1; i<N; i++)
+		{
+			if(taken[i] == 0)
+			{
+				result[now] = X[i];
+				if(now>=1 && isPrime[result[now]+result[now-1]] == false)
+					continue;
+				taken[i] = 1;
+				solve(now+1, NTaken+1);
+				taken[i] = 0;
+			}
+		}
+	}
+	public static void main(String[] args) 
+	{
+		int c = 0;
+		Scanner in = new Scanner(System.in);
+		PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+		for(int i=0; i<16; i++)
+			X[i] = i+1;
+		while(in.hasNextInt())
+		{
+			c++;
+			N = in.nextInt();
+			taken = new int[N];
+			result[0] = 1;
+			System.out.println("Case " + c + ":");
+			S = new StringBuilder("");
+			solve(1, 1);
+			System.out.print(S);
+			if(in.hasNextInt() == true)
+				System.out.println();
+		}
+		in.close();
+		out.close();
+	}
+}
