@@ -1,0 +1,60 @@
+import java.util.*;
+
+public class rooks2 
+{
+  static char[][] grid = new char[4][4];
+	static int size;
+	static int max;
+	public static int rooks(int i, int j, int number, int horizontalCheck, int verticalCheck)
+	{
+		int rooksNumber = 0;
+		if(j==size)
+			return rooks(i+1, 0, number, 0, verticalCheck);
+		
+		if(i==size)
+			return number;
+		
+		if(grid[i][j] == 'X')
+			if( (verticalCheck & (1<<j)) == 0 )
+				return rooks(i, j+1, number, 0, verticalCheck);
+			else
+				return rooks(i, j+1, number, 0, (verticalCheck ^ (1<<j)) );
+		
+		if(horizontalCheck == 1)
+			return rooks(i, j+1, number, 1, verticalCheck);
+		
+		if( (verticalCheck & (1<<j)) != 0 )
+			return rooks( i, j+1, number, horizontalCheck/*0*/, verticalCheck);
+		
+		rooksNumber = rooks( i, j+1, number+1, 1, (verticalCheck | (1<<j)) );
+		
+		rooksNumber = Math.max(rooksNumber, rooks( i, j+1, number, horizontalCheck/*0*/, verticalCheck ));
+		
+		return rooksNumber;
+	}
+	public static void main(String[] args) 
+	{
+		Scanner in = new Scanner(System.in);
+		String line;
+		size = in.nextInt();
+		line = in.nextLine();
+		while(size!=0)
+		{
+			for(int i=0; i<size; i++)
+			{
+				line = in.nextLine();
+				for(int j=0; j<size; j++)
+				{
+					grid[i][j] = line.charAt(j);
+				}
+			}
+			max = 0;
+			max = rooks(0, 0, 0, 0, 0);
+			System.out.println(max);
+			size = in.nextInt();
+			line = in.nextLine();
+		}
+		in.close();
+	}
+
+}
