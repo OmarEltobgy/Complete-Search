@@ -1,0 +1,70 @@
+import java.io.*;
+import java.lang.reflect.Array;
+import java.util.*;
+public class UVA_11804_Argentina 
+{
+  static String[][] SS = new String[10][3];
+	public static void swap(int i, int j)
+	{
+		String[] temp = new String[3];
+		temp = SS[i];
+		SS[i] = SS[j];
+		SS[j] = temp;
+	}
+	public static void main(String[] args) throws IOException 
+	{
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+		int NT, T, i, j, flag;
+		String S;
+		String[] Defense = new String[5];
+		String[] Attack = new String[5];
+		S = in.readLine();
+		NT = Integer.parseInt(S);
+		for(T=0; T<NT; T++)
+		{
+			flag = 1;
+			for(i=0; i<10; i++)
+			{
+				S = in.readLine();
+				SS[i] = S.split(" ");
+			}
+			for(i=0; i<10; i++)
+			{
+				flag = 0;
+				for(j=i+1; j<10; j++)
+				{
+					if(Integer.parseInt(SS[i][1]) > Integer.parseInt(SS[j][1]))
+						swap(i, j);
+					else if(Integer.parseInt(SS[i][1]) == Integer.parseInt(SS[j][1]))
+					{
+						if(Integer.parseInt(SS[i][2]) < Integer.parseInt(SS[j][2]))
+							swap(i, j);
+						else if(Integer.parseInt(SS[i][2]) == Integer.parseInt(SS[j][2]))
+						{
+							if(SS[i][0].compareTo(SS[j][0]) < 0)
+								swap(i, j);
+						}
+					}
+				}
+			}
+			for(i=0; i<5; i++)
+				Defense[i] = SS[i][0];
+			Arrays.sort(Defense);
+			for(i=0; i<5; i++)
+				Attack[i] = SS[i+5][0];
+			Arrays.sort(Attack);
+			out.printf("Case %d:\n", (T+1));
+			out.print("(");
+			for(i=0; i<4; i++)
+				out.print(Attack[i] + ", ");
+			out.println(Attack[i] + ")");
+			out.print("(");
+			for(i=0; i<4; i++)
+				out.print(Defense[i] + ", ");
+			out.println(Defense[i] + ")");
+		}
+		in.close();
+		out.close();
+	}
+}
