@@ -1,0 +1,94 @@
+public class CS {
+        /* counting permutations and combinations code */
+        /* Number of ways to choose r objects from a set of n objects */
+        public static int C(int n, int r) {
+                /* If number of elements left is less than required */
+                if (n < r)
+                        return 0;
+                /* If no choices are needed anymore */
+                else if (r == 0)
+                        return 1;
+                /* either choose current element or leave it */
+                else
+                        return C(n - 1, r - 1) + C(n - 1, r);
+        }
+ 
+        /* Number of ways to order n objects */
+        public static int P(int n) {
+                if (n == 0)
+                        return 1;
+                else
+                        return n * P(n - 1);
+        }
+ 
+        /* generating permutations and combinations code */
+        public static char[] output;
+        public static char[] str;
+        public static boolean[] visited;
+        public static int length;
+        public static int r;
+ 
+        /* prints all permutations, i is the next place to fill in output */
+        public static void permute(int i) {
+                if (i == length) {
+                        System.out.println(new String(output));
+                } else {
+                        int j;
+                        for (j = 0; j < length; j++)
+                                if (!visited[j]) {
+                                        visited[j] = true;// mark j as visited(remove it from the
+                                                                                // set)
+                                        output[i] = str[j];// add it to the output
+                                        permute(i + 1);// recurse on the left set
+                                      output[i] = 0;// not needed
+                                        visited[j] = false;// umark j(backtrack)
+                                }
+                }
+        }
+ 
+        /*
+         * i is the first element which we didnt make decision for,j is the next
+         * place to fill in output
+         */
+        public static void generateCombinations(int i, int j) {
+                if (j == r) {
+                        System.out.println(new String(output));
+                } else if (i==length) {
+                        /* prune this branch */
+                        return;
+                } else {
+                        output[j] = str[i];
+                        generateCombinations(i , j + 1);
+//                        output[j] = 0;
+                        generateCombinations(i + 1, j);
+                }
+        }
+        public static void gC(int i, int k)
+        {
+          int j;
+        	if(i==r)
+        		System.out.println(new String(output));
+        	else if(i<r)
+	        	for(j=k; j<length; j++)
+	        	{
+	        		output[i] = str[j];
+	        		gC(i+1, j+1);
+	        	}
+        }
+ 
+        /* prints all combinations of size r */
+        public static void main(String[] args) {
+                /* test permutations */
+                str = "ABCD".toCharArray();
+                output = new char[str.length];
+                visited = new boolean[str.length];
+                length = 4;
+//                permute(0);
+//                System.out.println();
+                /* test combinations */
+                r = 3;
+                gC(0, 0);
+                System.out.println();
+                generateCombinations(0,0);
+        }
+}
