@@ -1,0 +1,112 @@
+import java.io.*;
+import java.util.*;
+public class UVA_10344_23OutOf5 
+{
+  static int[] a = new int[5];
+	static int[] aa = new int[5];
+	static int[] aTaken = new int[5];
+	static char[] sign = new char[4];
+	static String state;
+	
+	public static void calc1(int i)
+	{
+		if(i==5)
+		{
+			calc2(0, a[0]);
+			return;
+		}
+		for(int j=0; j<5; j++)
+		{
+			if(aTaken[j] == 0)
+			{
+				a[i] = aa[j];
+				aTaken[j] = 1;
+				calc1(i+1);
+				aTaken[j] = 0;
+			}
+		}
+	}
+	
+	public static int calculator()
+	{
+		int result = 0;
+		int j = 0;
+		if(sign[j] == '+')
+			result += (a[0] + a[1]);
+		else if(sign[j] == '-')
+			result += (a[0] - a[1]);
+		else if(sign[j] == '*')
+			result += (a[0] * a[1]);
+//		System.out.print(sign[j] + " ");
+		j++;
+		if(sign[j] == '+')
+			result = result + a[2];
+		else if(sign[j] == '-')
+			result = result - a[2];
+		else if(sign[j] == '*')
+			result = result * a[2];
+//		System.out.print(sign[j] + " ");
+		j++;
+		if(sign[j] == '+')
+			result = result + a[3];
+		else if(sign[j] == '-')
+			result = result - a[3];
+		else if(sign[j] == '*')
+			result = result * a[3];
+//		System.out.print(sign[j] + " ");
+		j++;
+		if(sign[j] == '+')
+			result = result + a[4];
+		else if(sign[j] == '-')
+			result = result - a[4];
+		else if(sign[j] == '*')
+			result = result * a[4];
+//		System.out.print(sign[j] + " ");
+//		System.out.println(result);
+		return result;
+	}
+	
+	public static void calc2(int i, int Result)
+	{
+		if(state=="Possible")
+			return;
+		if(i==4)
+		{
+			if(Result != 23)
+				//Result=check;
+				return;
+			else
+			{
+				state = "Possible";
+				return;
+			}
+		}
+//		sign[i] = '+';
+		calc2(i+1, Result+a[i+1]);	
+//		sign[i] = '-';
+		calc2(i+1, Result-a[i+1]);	
+//		sign[i] = '*';
+		calc2(i+1, Result*a[i+1]);
+	}
+	
+	public static void main(String[] args)
+	{
+		int flag = 0;
+		Scanner in = new Scanner(System.in);
+		while(true)
+		{
+			flag = 0;
+			for(int i=0; i<5; i++)
+			{
+				aa[i] = in.nextInt();
+				if(aa[i] == 0)
+					flag++;
+			}
+			if(flag == 5)
+				break;
+			state = "Impossible";
+			calc1(0);
+			System.out.println(state);
+		}
+	}
+}
