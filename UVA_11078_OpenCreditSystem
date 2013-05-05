@@ -1,0 +1,23 @@
+#include<stdio.h>
+int main()
+{
+    int NT, T, i, N, max, maxN, diff, X;
+    scanf("%d",&NT);
+    for(T=0; T<NT; T++)
+    {
+        max = -1<<30;
+        maxN = -1<<30;
+        scanf("%d",&N);
+        for(i=0; i<N; i++)
+        {
+            scanf("%d",&X);
+            diff = maxN - X;
+            if(diff > max)
+                max = diff;
+            if(X > maxN)
+                maxN = X;
+        }
+        printf("%d\n",max);
+    }
+    return 0;
+}
