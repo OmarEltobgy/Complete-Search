@@ -1,0 +1,71 @@
+import java.util.*;
+public class CodeForces_47D_Safe
+{
+  static int[][] tries = new int[15][40];
+	static int[] rightEntry = new int[15];
+	static int[] isRight = new int[40];
+	static int n, m, counter;
+	public static void solve(int now, int taken)
+	{
+		if(taken == rightEntry[0])
+		{
+			if(check() == 1)
+				counter ++;
+			return;
+		}
+		
+		for(int i=now; i<n; i++)
+		{
+			isRight[i] = 1;
+			solve(i+1, taken+1);
+			isRight[i] = 0;
+		}
+	}
+	public static int invert(int X)
+	{
+		if(X == 0)
+			return 1;
+		else //X == 1
+			return 0;
+	}
+	public static int check()
+	{
+		int i, j, C, temp;
+		 for(i=1; i<m; i++)
+		 {
+			 C = 0;
+			 for(j=0; j<n; j++)
+			 {
+				 if(isRight[j] == 1)
+					 temp = tries[0][j];
+				 else
+					 temp = invert(tries[0][j]);
+				 if(tries[i][j] == temp)
+					 C++;
+			 }
+			 if(C != rightEntry[i])
+				 return 0;
+		 }
+		return 1;
+	}
+	public static void main(String[] args)
+	{
+		Scanner in = new Scanner(System.in);
+		int i, j;
+		String temp;
+		n = in.nextInt();
+		m = in.nextInt();
+		temp = in.nextLine();
+		for(i=0; i<m; i++)
+		{
+			temp = in.nextLine();
+			for(j=0; j<n; j++)
+				tries[i][j] = temp.charAt(j) - '0';
+			rightEntry[i] = temp.charAt(n+1) - '0';
+		}
+		counter = 0;
+		solve(0, 0);
+		System.out.println(counter);
+		in.close();
+	}
+}
