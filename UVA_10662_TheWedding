@@ -1,0 +1,80 @@
+import java.util.*;
+public class UVA_10662_TheWedding 
+{
+  static int Tnumber, Rnumber, Hnumber;
+	static int[][] prices = new int[100][3];//0 for T, 1 for R, 2 for H
+	static int[][] TandR = new int[100][100];
+	static int[][] RandH = new int[100][100];
+	static int[][] HandT = new int[100][100];
+	static int[] cheapest = new int[10];
+	static int flag;
+	public static void solve(int t, int r, int h, int which, int counter)/*which -> 0 for T, 1 for R, 2 for H*/
+	{
+		if(counter >= cheapest[3])
+			return;
+		if(which == 0)
+		{
+			for(t=0; t<Tnumber; t++)
+			{
+				for(r=0; r<Rnumber; r++)
+					if(TandR[t][r] == 0) //possible combination
+						solve(t, r, -1/*h*/, which+1, counter+prices[t][0]+prices[r][1]);
+			}
+		}
+		if(which == 1)
+		{
+			for(h=0; h<Hnumber; h++)
+				if(RandH[r][h] == 0) //possible combination
+					solve(t, r, h, which+1, counter+prices[h][2]);
+		}
+		if(which == 2)
+		{
+			if(HandT[h][t] == 0 && counter < cheapest[3]) //possible combination	
+			{
+				cheapest[0] = t;
+				cheapest[1] = r;
+				cheapest[2] = h;
+				cheapest[3] = counter;
+				flag = 1;
+			}
+			return;
+		}
+	}
+	public static void main(String[] args) 
+	{
+		int i, j;
+		Scanner in = new Scanner(System.in);
+		while(in.hasNextInt())
+		{
+			Tnumber = in.nextInt();
+			Rnumber = in.nextInt();
+			Hnumber = in.nextInt();
+			for(i=0; i<Tnumber; i++)
+			{
+				prices[i][0] = in.nextInt();
+				for(j=0; j<Rnumber; j++)
+					TandR[i][j] = in.nextInt();
+			}
+			for(i=0; i<Rnumber; i++)
+			{
+				prices[i][1] = in.nextInt();
+				for(j=0; j<Hnumber; j++)
+					RandH[i][j] = in.nextInt();
+			}
+			for(i=0; i<Hnumber; i++)
+			{
+				prices[i][2] = in.nextInt();
+				for(j=0; j<Tnumber; j++)
+					HandT[i][j] = in.nextInt();
+			}
+			flag = 0;
+			cheapest[3] = 1<<30;
+			solve(-1, -1, -1, 0, 0);
+			if(flag == 0)
+				System.out.println("Don't get married!");
+			else
+				System.out.printf("%d %d %d:%d\n",cheapest[0], cheapest[1], cheapest[2], cheapest[3]);
+		}
+		in.close();
+	}
+}
