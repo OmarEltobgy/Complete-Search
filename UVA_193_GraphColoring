@@ -1,0 +1,62 @@
+#include <stdio.h>
+static int n;
+static int nodes[100][100];//row Index: node No. 
+static int NLinkedNodes[100];
+static int state[100];//-1:not taken  0:black  1:white
+static int maxNBlack;
+static int blackNode[100];
+static int maxBlackNode[100];
+void solve(int nowNode, int NBlack)
+{
+  int i, j, flag = 1;
+	if( nowNode == n )
+	{
+		if(NBlack > maxNBlack)
+		{
+			maxNBlack = NBlack;
+			for(i=0; i<NBlack; i++)
+				maxBlackNode[i] = blackNode[i];			
+		}
+		return;
+	}
+	for(i=0; i<NLinkedNodes[nowNode]&&flag==1; i++)
+		if(state[ nodes[nowNode][i] ] == 0)
+			flag = 0;
+	if(flag == 1)
+	{
+		state[nowNode] = 0;
+		blackNode[NBlack] = nowNode;		
+		solve(nowNode+1, NBlack+1);
+	}
+	state[nowNode] = 1;
+	solve(nowNode+1, NBlack);
+}
+int main()
+{
+	int m, k, i, j, M, firstNode, secondNode;
+	scanf("%d",&m);
+	for(M=0; M<m; M++)
+	{
+		scanf("%d%d",&n,&k);
+		for(i=0; i<n; i++)
+		{
+			NLinkedNodes[i] = 0;
+			state[i] = -1;
+		}
+		for(i=0; i<k; i++)
+		{
+			scanf("%d%d",&firstNode,&secondNode);
+			nodes[firstNode-1][NLinkedNodes[firstNode-1]] = secondNode-1;
+			nodes[secondNode-1][NLinkedNodes[secondNode-1]] = firstNode-1;
+			NLinkedNodes[firstNode-1] ++;
+			NLinkedNodes[secondNode-1] ++;
+		}
+		maxNBlack = 0;
+		solve(0, 0);
+		printf("%d\n",maxNBlack);
+		for(i=0; i<maxNBlack-1; i++)
+			printf("%d ",(maxBlackNode[i]+1));
+		printf("%d\n",(maxBlackNode[i]+1));
+	}
+	return 0;
+}
