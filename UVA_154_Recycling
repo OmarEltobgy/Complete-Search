@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+int BinType(char c)
+{
+  if(c == 'r')
+		return 0;
+	if(c == 'o')
+		return 1;
+	if(c == 'y')
+		return 2;
+	if(c == 'g')
+		return 3;
+	if(c == 'b')
+		return 4;
+}
+int WasteType(char c)
+{
+	if(c == 'P')
+		return 0;
+	if(c == 'G')
+		return 1;
+	if(c == 'A')
+		return 2;
+	if(c == 'S')
+		return 3;
+	if(c == 'N')
+		return 4;
+}
+int main()
+{
+	int binsAndWastes[5][5];//row index(bin): 0->red(r) 1->orange(o) 2->yellow(y) 3->green(g) 4->blue(b)
+								   //column index(waste): 0->plastic(P) 1->glass(G) 2->aluminium(A) 3->steel(S) 4->newspaper(N)
+	int cityBinWaste[150][5];//row index: city && column index: bin type && value: waste type
+	int maxWaste[5];//index is the bin type
+						 //value is the waste type
+	int i, j, B, W, counter, minCity, min, cityN, k;
+	char X[100];
+	gets(X);
+	while(X[0] != '#')
+	{
+//		for(i=0; i<5; i++)
+//			for(j=0; j<5; j++)
+//				binsAndWastes[i][j] = 0;
+		cityN = 0;
+		while(X[0] != 'e')
+		{
+			for(i=0; i<5; i++)
+			{
+				B = BinType(X[i*4]);
+				W = WasteType(X[i*4+2]);
+				cityBinWaste[cityN][B] = W;
+//				binsAndWastes[B][W]++;
+			}
+			gets(X);
+			cityN ++;
+		}
+		min = 1<<30;
+		for(i=0; i<cityN; i++)
+		{
+			counter = 0;
+			for(j=0; j<cityN; j++)
+			{
+				for(k=0; k<5; k++)
+				{
+					if(cityBinWaste[i][k] != cityBinWaste[j][k])
+					{
+						counter ++;
+					}
+				}
+			}
+			if(counter < min)
+			{
+				min = counter;
+				minCity = i;
+			}
+		}
+		printf("%d\n",(minCity+1));
+		gets(X);
+	}
+ 	return 0;
+}
