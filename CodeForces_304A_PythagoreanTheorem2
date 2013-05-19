@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <Math.h>
+
+int main()
+{
+  int n, a, b ,c, i, flag, counter;
+	double aa;
+	int C[10001];
+	counter = 0;
+	for(c=1; c<=10000; c++)
+	{
+		flag = 0;
+		for(b=1; b<c; b++)
+		{
+			aa = sqrt(c*c - b*b);
+			if( aa!=0 && aa == (int)aa )
+			{
+				counter++;
+				//printf("%lf %d %d\n",aa,b,c);
+			}
+		}
+		C[c] = counter;
+	}
+	scanf("%d",&n);
+	printf("%d",C[n]/2);
+	return 0;
+}
