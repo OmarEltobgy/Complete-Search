@@ -1,0 +1,596 @@
+import java.util.*;
+
+public class Tabular 
+{
+  static int[][] result, probability;
+	static int[] NP, T;
+	static int minN, uncovered, num;
+	public static void solve(int now, int counter)
+	{
+		int i, F, insert, m;
+//		if(counter > minN)
+//			return;
+		if(now == uncovered)
+		{			
+			if(counter == minN)
+			{
+				for(m=0; m<counter; m++)
+					result[num][m] = T[m];
+				num ++;
+			}
+			else if(counter < minN)
+			{
+				minN = counter;
+				num = 0;
+				for(m=0; m<counter; m++)
+					result[num][m] = T[m];
+				num ++;
+			}
+			return;
+		}
+		for(i=0; i<NP[now]; i++)
+		{
+			insert = probability[now][i];
+			F = insert(insert, counter);
+			solve(now+1, counter+F);
+			if(F == 1)
+				remove(insert, counter+F);
+		}
+	}
+	public static int insert(int X, int counter)
+	{
+		int i;
+		//First Find if X is there before
+		for(i=0; i<counter; i++)
+			if(T[i] == X)
+				return 0;
+		//insertion Sort if not found
+		for(i=counter-1; i>=0; i--)
+			if(T[i] > X)
+				T[i+1] = T[i];
+			else //T[i] < X
+				break;
+		T[i+1] = X;
+		return 1;
+	}
+	public static void remove(int X, int counter)
+	{
+		int i, flag = 0;
+		for(i=0; i<counter-1; i++)
+		{
+			if(T[i] == X)
+				flag = 1;
+			if(flag == 1)
+				T[i] = T[i+1];
+		}
+		T[i] = 0;
+		for(i=0; i<counter-1; i++)
+			if(T[i] == X)
+				System.out.println("Ya fala7tak");
+	}
+	public static int countOnes(int X)
+	{
+		String S = "";
+		int T=X, i, counter1=0;
+		while(T != 0)
+		{
+			S += T%2;
+			T = T/2;
+		}
+		for(i=0; i<S.length(); i++)
+			if(S.charAt(i) == '1')
+				counter1 ++;
+		return counter1;
+	}
+	public static int checkPowerOfTwo(int X)
+	{
+		int c = 0;
+		if(X <= 0)
+			return -1;
+		while(X != 1)
+		{
+			if( X % 2 != 0 )
+				return -1;
+			X = X/2;
+			c++;
+		}
+		return c;
+	}
+	public static void output(int[] X, int N)
+	{
+		int i, Num, length, flag;
+		char[] outR = new char[N];
+		char[] out = new char[N];
+		Num = X[0];
+		length=0;
+		while(Num != 0)
+		{
+			outR[length] = (char) (Num%2 + '0');
+			Num = Num/2;
+			length++;
+		}
+		for(i=length; i<N; i++)
+			outR[i] = '0';
+		for(i=0; i<N; i++)
+			out[i] = outR[N-i-1];
+		i = 1;
+		while(X[i] != -1)
+		{
+			out[N-checkPowerOfTwo(X[i])-1] = '-';
+			i++;
+		}
+		flag = 0;
+		for(i=0; i<N; i++)
+		{
+			if(out[i] != '-')
+			{
+				flag = 1;
+				if(out[i] == '1')
+					System.out.printf("%c", (i+'A'));
+				else
+					System.out.printf("%c'", (i+'A'));
+			}
+		}
+		if(flag == 0)
+			System.out.print("1");
+	}
+	public static void main(String[] args) 
+	{
+		int N, temp, i, j, k, max, onesN, counter1, counter2, flag, primeImplicantN, m, similar;
+		int EssentialN=0, remainingN=0, notNecessary=0;
+		int[] add, minTerms;
+		int[][] temp1, temp2, primeImplicants, first = null, second = null, chart;
+		Scanner in = new Scanner(System.in);
+		System.out.print("** Enter Number Of Variables in the Function : ");
+		N = in.nextInt();
+		max = (int) Math.pow(2, N);
+		System.out.printf("\n** Enter The minTerms from [0, %d] End the minTerms with -1 \n", (max-1));	
+		System.out.printf("-----------------------------------------------------------\n", (max-1));	
+		minTerms = new int[1000]; //is minterm?
+		temp1 = new int[1000][1000]; //columnIndex = 0 -> taken? && 1 -> rank && 2 -> number && rest -> differences
+		temp2 = new int[1000][1000]; //cloumnIndex = 0 -> taken? && 1 -> rank && 2 -> number && rest -> differences
+		primeImplicants = new int[1000][1000]; //columnIndex = 0 -> number && rest -> differences
+		chart = new int[1000][1000];//rowIndex : primeImplicantN -> isMinterm? // columnIndex : max -> isTaken?
+		add = new int[1000];
+		for(i=0; i<1000; i++)
+		{
+			for(j=0; j<1000; j++)
+			{
+				temp1[i][j] = -1;
+				temp2[i][j] = -1;
+				primeImplicants[i][j] = -1;
+				chart[i][j] = -1;
+			}
+			minTerms[i] = -1;
+			add[i] = -1;
+		}
+		System.out.print("** Enter a minTerm : ");
+		temp = in.nextInt();
+		uncovered = 0;
+		while(temp != -1)
+		{
+			if(temp >=0 && temp < max)
+			{
+				if(minTerms[temp] != 1)
+				{
+					minTerms[temp] = 1;
+					uncovered++;
+				}
+			}
+			else
+				System.out.println("[!] InCorrect Minterm! Try Again.");
+			System.out.print("** Enter a minTerm : ");
+			temp = in.nextInt();
+		}
+		System.out.printf("\n** Enter The Don't Care minTerms from [0, %d] End  with -1 \n", (max-1));	
+		System.out.printf("-----------------------------------------------------------\n", (max-1));
+		System.out.print("** Enter a Don't Care minTerm : ");
+		temp = in.nextInt();
+		while(temp != -1)
+		{
+			if(temp >=0 && temp < max)
+			{
+				if(minTerms[temp] == 1)
+				{
+					System.out.println("[!] This was defined before as a Minterm");
+					System.out.print("[!] Enter 0 for don't care minterm and 1 for minterm : ");
+					flag = in.nextInt();
+					if(flag == 0)
+						minTerms[temp] = 0;
+					else
+						minTerms[temp] = 1;
+				}
+				else
+					minTerms[temp] = 0;
+			}			
+			else
+				System.out.println("[!] InCorrect Minterm! Try Again.");
+			System.out.print("** Enter a Don't Care minTerm : ");
+			temp = in.nextInt();
+		}
+		counter1 = 0;
+		//Counting Ones and putting them in temp1 according to the Ones No.
+		for(i=0; i<max; i++)
+			if(minTerms[i] != -1)
+			{
+				onesN = countOnes(i);
+				//insertion sort
+				for(j=counter1-1; j>=0; j--)
+					if(temp1[j][1] > onesN)
+					{
+						temp1[j+1][1] = temp1[j][1];
+						temp1[j+1][2] = temp1[j][2];
+					}
+					else
+						break;
+				temp1[j+1][1] = onesN;
+				temp1[j+1][2] = i;
+				temp1[j+1][0] = 0;//Not taken
+				counter1 ++;
+			}
+//		for(i=0; i<counter1; i++)
+//			System.out.println( "Number of Ones : " + temp1[i][1] + " " + temp1[i][2] );
+		primeImplicantN = 0;
+		flag = 1;
+		while(flag == 1)
+		{
+			flag = 0;
+			if(temp1[0][0] == -1)
+			{
+				first = temp2;
+				second = temp1;
+			}
+			else if(temp2[0][0] == -1)
+			{
+				first = temp1;
+				second = temp2;
+			}
+			counter2 = 0;
+			for(i=0; i<counter1; i++)
+			{
+				for(j=i+1; j<counter1; j++)
+				{
+					if(first[j][1] == first[i][1])
+						continue;
+					if(first[j][1] > first[i][1]+1)
+					{
+						flag = 1;
+						break;
+					}
+					//Next Rank
+					if(first[j][1] == first[i][1]+1)
+					{
+						flag = 1;
+						//Checking difference power of 2 and same differences
+						temp = first[j][2] - first[i][2];
+						if(temp > 0 && checkPowerOfTwo(temp) != -1)
+						{
+							similar = 1;
+							k = 3;
+							while(first[i][k] != -1 || first[j][k] != -1)
+							{
+								if(first[i][k] != first[j][k])
+								{
+									similar = 0;
+									break;
+								}
+								k++;
+							}
+							if(similar == 0)
+								continue;
+							second[counter2][0] = 0; //Not taken
+							first[i][0] = 1; //taken
+							first[j][0] = 1; //taken
+							second[counter2][1] = first[i][1];
+							second[counter2][2] = first[i][2];
+							k = 2;
+							while(first[i][k] != -1)
+							{
+								second[counter2][k] = first[i][k];
+								k++;
+							}
+							//insertion Sort
+							for(m=k-1; m>=3; m--)
+								if(second[counter2][m] > temp)
+									second[counter2][m+1] = second[counter2][m];
+								else
+									break;
+							second[counter2][m+1] = temp;
+							counter2 ++;
+						}
+					}
+				}
+			}
+			//taking the untaken implicants as prime implicants
+			for(i=0; i<counter1; i++)
+			{
+				if(first[i][0] == 0)
+				{
+					j = 2;
+					k = 0;
+					while(first[i][j] != -1)
+					{
+						primeImplicants[primeImplicantN][k] = first[i][j];
+						first[i][j] = -1;
+						j++;
+						k++;
+					}
+					primeImplicantN ++;
+				}
+				j = 0;
+				while(first[i][j] != -1)
+				{
+					first[i][j] = -1;
+					j++;
+				}
+			}
+			counter1 = counter2;//******//
+			//Removing Duplicates
+			for(i=0; i<counter1; i++)
+			{
+				for(j=i+1; j<counter1; j++)
+				{
+					similar = 1;
+					k = 2;
+					while(second[i][k] != -1 || second[j][k] != -1)
+					{
+						if(second[i][k] != second[j][k])
+						{
+							similar = 0;
+							break;
+						}
+						k++;
+					}
+					if(similar == 1)
+					{
+						for(k=j; k<counter1; k++)
+						{
+							second[k] = second[k+1];
+						}
+						counter1 --;
+					}
+				}
+			}
+		}
+		System.out.println("\nThe Prime Implicants : ");
+		System.out.println("-----------------------");
+		int counter, firstt;
+		for(i=0; i<max; i++)
+			if(minTerms[i] == 1)//minterm
+				chart[primeImplicantN][i] = 1;//rowIndex : primeImplicantN -> isMinterm?
+			else//don't care(0) or not minterm(-1)
+				chart[primeImplicantN][i] = -1;
+		for(i=0; i<primeImplicantN; i++)
+		{
+			output(primeImplicants[i], N);
+			System.out.print("   ");
+			j=0;
+			while(primeImplicants[i][j] != -1)
+			{
+//				System.out.print( primeImplicants[i][j] + " ");
+				add[j] = primeImplicants[i][j];
+				j++;
+			}
+			counter = 0;
+			firstt = add[0];
+			chart[i][firstt] = 1;
+			counter += firstt;
+			for(k=1; k<j; k++)
+			{
+				if(minTerms[firstt+add[k]] == 1)
+					chart[i][firstt+add[k]] = 1;
+				counter += add[k];
+			}
+			if(minTerms[counter] == 1)
+				chart[i][counter] = 1;
+			chart[i][max] = 0;//columnIndex : max -> isTaken?
+		}
+		System.out.println();
+//		for(i=0; i<=primeImplicantN; i++)
+//		{
+//			for(j=0; j<max; j++)
+//				if(chart[i][j] == 1)
+//					System.out.print( "X " );
+//				else
+//					System.out.print( "- " );
+//			System.out.println();
+//		}
+		int isEssential, coveredBy = -1;
+		flag = 1;
+		while(uncovered > 0 && flag == 1)
+		{
+			flag = 0;
+			//Searching for Essential Prime Implicant
+			for(j=0; j<max && uncovered>0; j++)
+			{
+				if(chart[primeImplicantN][j] == 1)
+				{
+					isEssential = -1;
+					coveredBy = -1;
+					for(i=0; i<primeImplicantN; i++)
+					{
+						if(isEssential == -1 && chart[i][max] != -1/*isn't dominated*/ && chart[i][j] == 1)
+						{
+							isEssential = 1;
+							coveredBy = i;
+						}
+						else if(isEssential == 1 && chart[i][max] != -1/*isn't dominated*/ && chart[i][j] == 1)
+							isEssential = 0;
+					}
+					if(isEssential == 1)
+					{
+						flag = 1;
+						chart[coveredBy][max] = 1;//Essential
+						EssentialN++;
+						for(k=0; k<max  && uncovered>0; k++)
+						{
+							if(chart[primeImplicantN][k] != -1 && chart[coveredBy][k] == 1)
+							{
+								chart[primeImplicantN][k] = -1;//covered
+								uncovered--;
+							}
+						}
+					}
+				}
+			}
+			int dominate1, dominate2;
+			//Column Dominance
+			for(i=0; i<max && uncovered>0; i++)
+			{
+				if(chart[primeImplicantN][i] != 1)
+					continue;
+				for(j=i+1; j<max; j++)
+				{
+					if(chart[primeImplicantN][j] != 1)
+						continue;
+					dominate1 = 1;
+					dominate2 = 1;
+					for(k=0; k<primeImplicantN && (dominate1==1 || dominate2==1); k++)
+					{
+						if(chart[k][max] == 0)
+						{
+							if(chart[k][i] != 1 && chart[k][j] == 1)
+								dominate1 = 0;
+							else if(chart[k][j] != 1 && chart[k][i] == 1)
+								dominate2 = 0;
+						}
+					}
+					if(dominate1 == 1 && dominate2 != 1)
+					{
+						if(chart[primeImplicantN][i] != -1)
+						{
+							flag = 1;
+							chart[primeImplicantN][i] = -1;//covered
+							uncovered--;
+						}
+					}
+					else if(dominate2 == 1 && dominate1 != 1)
+					{
+						if(chart[primeImplicantN][j] != -1)
+						{
+							flag = 1;
+							chart[primeImplicantN][j] = -1;//covered
+							uncovered--;
+						}
+					}
+				}
+			}
+			//Row Dominance
+			for(i=0; i<primeImplicantN && uncovered>0; i++)
+			{
+				if(chart[i][max] != 0)
+					continue;
+				for(j=i+1; j<primeImplicantN; j++)
+				{
+					if(chart[j][max] != 0)
+						continue;
+					dominate1 = 1;
+					dominate2 = 1;
+					for(k=0; k<max && (dominate1==1 || dominate2==1); k++)
+					{
+						if(chart[primeImplicantN][k] == 1)
+						{
+							if(chart[i][k] != 1 && chart[j][k] == 1)
+								dominate1 = 0;
+							else if(chart[j][k] != 1 && chart[i][k] == 1)
+								dominate2 = 0;
+						}
+					}
+					if(dominate1 == 1 && dominate2 != 1)
+					{
+						int c1=0, c2=0;
+						k=0;
+						while(primeImplicants[i][k] != -1)
+						{
+							k++;
+							c1++;
+						}
+						k=0;
+						while(primeImplicants[j][k] != -1)
+						{
+							k++;
+							c2++;
+						}
+						if(c1 >= c2)//lower or equal cost
+						{
+							flag = 1;
+							chart[j][max] = -1;//Not Necessary
+							notNecessary ++;
+						}
+					}
+					else if(dominate2 == 1 && dominate1 != 1)
+					{
+						int c1=0, c2=0;
+						k=0;
+						while(primeImplicants[i][k] != -1)
+						{
+							k++;
+							c1++;
+						}
+						k=0;
+						while(primeImplicants[j][k] != -1)
+						{
+							k++;
+							c2++;
+						}
+						if(c2 >= c1)//lower or equal cost
+						{
+							flag = 1;
+							chart[i][max] = -1;//Not Necessary
+							notNecessary ++;
+						}
+					}
+				}
+			}
+		}
+		System.out.println("\nThe Essential Prime Implicants : ");
+		System.out.println("-------------------------------");
+		for(i=0; i<primeImplicantN; i++)
+		{
+			if(chart[i][max] == 1)
+			{
+				output(primeImplicants[i], N);
+				System.out.print("    ");
+			}
+		}
+		if(uncovered != 0)
+		{
+			remainingN = primeImplicantN - (notNecessary + EssentialN);
+			probability = new int[uncovered][remainingN];
+			NP = new int[uncovered];
+			T = new int[remainingN];
+			result = new int[1000][primeImplicantN]; // 1000 -> Combinations No.
+			minN = uncovered;
+			num = 0;
+			k = 0;
+			for(j=0; j<max; j++)
+			{
+				if(chart[primeImplicantN][j] != 1) //already covered
+					continue;
+				for(i=0; i<primeImplicantN; i++)
+				{
+					if(chart[i][j] == 1)
+					{
+						probability[k][NP[k]] = i;
+						NP[k] ++;
+					}
+				}
+				k++;
+			}
+			solve(0, 0);
+			System.out.println("\nThe Remaining Prime Implicants : ");
+			System.out.println("--------------------------------");
+			for(i=0; i<num; i++)
+			{
+				for(j=0; j<minN; j++)
+				{
+					output(primeImplicants[result[i][j]], N);
+					System.out.print("   ");
+				}
+				if(i != num-1)
+					System.out.println("\nOR");
+			}
+		}
+		in.close();
+	}
+}
