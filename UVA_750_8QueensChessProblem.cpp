@@ -1,99 +1,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 int places[8];
-int places2[10000][8];
 int row, column;
 int NNN;
+int horizontalCheck[20], verticalCheck[20], sumDiagonal[40], diffDiagonal[40];
 
 void solve(int i, int j, int N)
 {
-  if(i == 8)
+	if(N < j)
+		return;
+	if(j == 8)
 	{
 		if(N == 8)
 		{
+			printf("%2d      ", (NNN+1));
 			for(int k=0; k<8; k++)
 			{
-				places2[NNN][k] = places[k];
-			}
-			int swap = 1;
-			for(int k=NNN-1; k>=0 && swap==1; k--)
-			{
-				swap = 0;
-				for(int kk=0; kk<8; kk++)
-				{
-					if(places2[k+1][kk] < places2[k][kk])
-					{
-						swap = 1;
-						break;
-					}
-					else if(places2[k+1][kk] > places2[k][kk])
-					{
-						swap = 0;
-						break;
-					}
-				}
-				if(swap == 1)
-				{
-					for(int kk=0; kk<8; kk++)
-					{
-						int temp = places2[k][kk];
-						places2[k][kk] = places2[k+1][kk];
-						places2[k+1][kk] = temp;
-					}
-				}
+				if(k != 7)
+					printf("%d ", (places[k]+1));
+				else
+					printf("%d\n", (places[k]+1));			
 			}
 			NNN++;
 		}
 		return;
 	}
-	if(j == 8)
+	if(i == 8)
 	{
-		solve(i+1, 0, N);
+		solve(0, j+1, N);
 		return;
 	}
-	if(i == (row-1) && j == (column-1))
+	if(horizontalCheck[i]==0 && verticalCheck[j]==0 && sumDiagonal[i+j]==0 && diffDiagonal[i-j+(8-1)]==0)
 	{
-		solve(i, j+1, N);
+		horizontalCheck[i] = 1;
+		verticalCheck[j] = 1;
+		sumDiagonal[i+j] = 1;
+		diffDiagonal[i-j+(8-1)] = 1;
+		places[j] = i;
+		solve(0, j+1, N+1);
+		horizontalCheck[i] = 0;
+		verticalCheck[j] = 0;
+		sumDiagonal[i+j] = 0;
+		diffDiagonal[i-j+(8-1)] = 0;
+		places[j] = -1;
+		solve(i+1, j, N);	
 	}
 	else
 	{
-		int canWe = 1;
-		for(int k=0; k<8 && canWe==1; k++)
-		{
-			if(places[k] != -1)
-			{
-				if( j == k || places[k] == i)
-					canWe = 0;
-				if( places[k]+k==i+j || places[k]-k==i-j)
-					canWe = 0;
-			}
-		}
-		if(canWe == 1)
-		{		
-			places[j] = i;
-			solve(i, j+1, N+1);
-			places[j] = -1;
-			solve(i, j+1, N);	
-		}
-		else
-		{
-			solve(i, j+1, N);
-		}
-	}		
+		solve(i+1, j, N);
+	}
 }
 
 int main()
 {
 	int test, i, j;
 	scanf("%d",&test);
+	for(i=0; i<8; i++)
+	{
+		horizontalCheck[i] = 0;
+		verticalCheck[i] = 0;
+		sumDiagonal[i] = 0;
+		diffDiagonal[i] = 0;
+		places[i] = -1;
+	}
+	for(i=8; i<=2*(8-1); i++)
+	{
+		sumDiagonal[i] = 0;
+		diffDiagonal[i] = 0;
+	}
 	while(test--)
 	{
 		scanf("%d %d",&row,&column);
-		for(i=0; i<8; i++)
-		{
-			places[i] = -1;
-		}
 		places[column-1] = row-1;
+		horizontalCheck[row-1] = 1;
+		verticalCheck[column-1] = 1;
+		sumDiagonal[(row-1)+(column-1)] = 1;
+		diffDiagonal[(row-1)-(column-1)+(8-1)] = 1;
 		NNN = 0;
 		printf("SOLN       COLUMN\n");
 		printf(" #      ");
@@ -106,19 +88,12 @@ int main()
 		}
 		printf("\n");
 		solve(0, 0, 1);
-		for(int kkk=0; kkk<NNN; kkk++)
-		{
-			printf("%2d      ", (kkk+1));
-			for(int k=0; k<8; k++)
-			{
-				if(k != 7)
-					printf("%d ", (places2[kkk][k]+1));
-				else
-					printf("%d\n", (places2[kkk][k]+1));			
-			}
-		}
 		if(test != 0)
 			printf("\n");
+		horizontalCheck[row-1] = 0;
+		verticalCheck[column-1] = 0;
+		sumDiagonal[row-1+column-1] = 0;
+		diffDiagonal[(row-1)-(column-1)+(8-1)] = 0;
 	}
 	return 0;
 }
