@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+char grid[20][20];
+int NNN, Num;
+
+void solve(int i, int N, int verticalCheck, int sumDiagonal, int diffDiagonal)
+{
+    if(N < i)
+  	return;
+	if(i == Num)
+	{
+		if(N == Num)
+			NNN++;
+		return;
+	}
+	for(int j=0; j<Num; j++)
+	{
+		if(grid[i][j] != '*')
+		{
+			if((verticalCheck & 1<<j) == 0 && (sumDiagonal & 1<<(i+j)) == 0 && (diffDiagonal & 1<<(i-j+(Num-1))) == 0)
+				solve(i+1, N+1, verticalCheck|1<<j, sumDiagonal|1<<(i+j), diffDiagonal|1<<(i-j+(Num-1)));	
+	 	}
+	}
+}
+
+int main()
+{
+	int i, j, test = 0;
+	char temp[10];
+	scanf("%d",&Num);
+	gets(temp);
+	while(Num != 0)
+	{
+		for(i=0; i<Num; i++)
+			gets(grid[i]);
+		test ++;
+		NNN = 0;
+		solve(0, 0, 0, 0, 0);
+		printf("Case %d: %d\n", test, NNN);
+		scanf("%d",&Num);
+		gets(temp);
+	}
+	return 0;
+}
