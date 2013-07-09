@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+int Num;
+int places[15][365597][15], maxN[15], removed[400000], placesTemp[15];
+
+void solve(int i, int N, int verticalCheck, int sumDiagonal, int diffDiagonal)
+{
+    if(N < i)
+    	return;
+	if(i == Num)
+	{
+		for(int k=0; k<Num; k++)
+			places[Num][maxN[Num]][k] = placesTemp[k];
+		maxN[Num]++;
+		return;
+	}
+	for(int j=0; j<Num; j++)
+	{
+		if((verticalCheck & 1<<j) == 0 && (sumDiagonal & 1<<(i+j)) == 0 && (diffDiagonal & 1<<(i-j+(Num-1))) == 0)
+		{
+			placesTemp[i] = j;
+			solve(i+1, N+1, verticalCheck|1<<j, sumDiagonal|1<<(i+j), diffDiagonal|1<<(i-j+(Num-1)));
+		}
+	}
+}
+
+int main()
+{
+	int i, j, test = 0;
+	char temp;
+	for(Num = 4; Num < 15; Num++)
+	{
+		maxN[Num] = 0;
+		solve(0, 0, 0, 0, 0);
+	}
+	scanf("%d",&Num);	
+	while(Num != 0)
+	{
+		for(i=0; i<maxN[Num]; i++)
+			removed[i] = 0;
+		int answer = maxN[Num];
+		for(i=0; i<Num; i++)
+		{
+			scanf("%c",&temp);
+			for(j=0; j<Num; j++)
+			{
+				scanf("%c",&temp);
+				if(temp == '*')
+				{
+					for(int k=0; k<maxN[Num]; k++)
+					{
+						if(places[Num][k][i] == j)
+						{
+							if(removed[k] == 0)
+							{
+								answer --;
+								removed[k] = 1;
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		test ++;
+		printf("Case %d: %d\n", test, answer);
+		scanf("%d",&Num);
+	}
+	return 0;
+}
