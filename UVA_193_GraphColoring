@@ -1,0 +1,107 @@
+#include <iostream>
+#include <stdio.h>
+#include <vector>
+using namespace std;
+
+int nodesN, edgesN;
+int maxx = -1;
+int visited[500];
+int blackNodesColored[500];
+int black = 0, white = 1, notVisited = -1;
+vector<vector<int> > adjList;
+
+void solve(int nowNode, int blackNodes)
+{
+    if(blackNodes + (nodesN+1 - nowNode) < maxx)
+    {
+        return;
+    }
+
+    if(nowNode == nodesN+1)
+    {
+        if(blackNodes > maxx)
+        {
+            maxx = blackNodes;
+            int index = 0;
+            for(int i=1; i<=nodesN; i++)
+            {
+                if(visited[i] == black)
+                {
+                    blackNodesColored[index] = i;
+                    index++;
+                }
+            }
+        }
+        return;
+    }
+
+    bool isThereBlack = false;
+    for(int i=0; i<(int)adjList[nowNode].size(); i++)
+    {
+        int nextNode = adjList[nowNode][i];
+        if(visited[nextNode] == black)
+        {
+            isThereBlack = true;
+        }
+    }
+
+    if(isThereBlack == true)
+    {
+        visited[nowNode] = white;
+        solve(nowNode+1, blackNodes);
+        visited[nowNode] = notVisited;
+    }
+    else
+    {
+        visited[nowNode] = black;
+        solve(nowNode+1, blackNodes+1);
+        visited[nowNode] = notVisited;
+
+        visited[nowNode] = white;
+        solve(nowNode+1, blackNodes);
+        visited[nowNode] = notVisited;
+    }
+}
+
+int main()
+{
+    int testN, first, second;
+    cin >> testN;
+    for(int i=1; i<=300; i++)
+    {
+        visited[i] = notVisited;
+    }
+    while(testN--)
+    {
+        adjList.clear();
+        cin >> nodesN >> edgesN;
+        adjList.resize(nodesN+1);
+        for(int i=0; i<edgesN; i++)
+        {
+            cin >> first >> second;
+            adjList[first].push_back(second);
+            adjList[second].push_back(first);
+        }
+
+        maxx = -1;
+        for(int i=1; i<=nodesN; i++)
+        {
+            solve(1, 0);
+        }
+
+        cout << maxx << endl;
+        for(int i=0; i<maxx; i++)
+        {
+            cout << blackNodesColored[i];
+            if(i != maxx-1)
+            {
+                cout << " ";
+            }
+            else // i == (int)blackNodesColored.size()-1
+            {
+                cout << endl;
+            }
+        }
+    }
+    return 0;
+}
