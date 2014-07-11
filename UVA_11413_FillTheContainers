@@ -1,0 +1,65 @@
+#include <iostream>
+#include <stdio.h>
+using namespace std;
+
+long long vesselsN, containersN, maximumCapacity, capacitySum;
+long long vesselCapacity[2000];
+
+long long simulate(long long containerCapacity)
+{
+    long long counter = 0;
+    long long containersNeeded = 1;
+    for(long long i=0; i<vesselsN; i++)
+    {
+        if(counter + vesselCapacity[i] <= containerCapacity)
+        {
+            counter += vesselCapacity[i];
+        }
+        else
+        {
+            containersNeeded ++;
+            counter = vesselCapacity[i]; // we are sure that vesselCapacity[i] is less than capacity of any container (containerCapacity)
+        }
+    }
+
+    return containersNeeded;
+}
+
+int main()
+{
+    while(scanf("%lld %lld",&vesselsN,&containersN) != EOF)
+    {
+        maximumCapacity = -1;
+        capacitySum = 0;
+        for(long long i=0; i<vesselsN; i++)
+        {
+            cin >> vesselCapacity[i];
+            if(vesselCapacity[i] > maximumCapacity)
+            {
+                maximumCapacity = vesselCapacity[i];
+            }
+            capacitySum += vesselCapacity[i];
+        }
+
+        long long low = maximumCapacity, high = capacitySum, mid;
+        long long res;
+        long long lastCorrectCapacity = capacitySum;
+        while(high >= low)
+        {
+           mid = (high + low) / 2;
+           res = simulate(mid); // all containers have capacity mid
+           if(res > containersN)
+           {
+               low = mid + 1;
+           }
+           else if(res <= containersN)
+           {
+               lastCorrectCapacity = mid;
+               high = mid - 1;
+           }
+        }
+
+        cout << lastCorrectCapacity << endl;
+    }
+    return 0;
+}
